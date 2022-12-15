@@ -1,11 +1,37 @@
+import React, { useState, useEffect } from "react";
+import data from "../data"
 import vehincle from '../images/fluent_vehicle-ship.png'
 import ant from '../images/ant-design_file.png'
 import map from '../images/map_insurance-agency.png'
 import user from '../images/mdi_user.png'
 import finance from '../images/mdi_finance.png'
 import truck from '../images/cil_truck.png'
+import prevIcon from '../images/icon-left.png'
+import nextIcon from '../images/icon-right.png'
 
 const Services = () => {
+  const [rendering] = useState(data);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const lastIndex = rendering.length - 1;
+    if (index < 0) {
+      setIndex(lastIndex);
+    }
+    if (index > lastIndex) {
+      setIndex(0);
+    }
+  }, [index, rendering]);
+
+  useEffect(() => {
+    let slider = setInterval(() => {
+      setIndex(index + 1);
+    }, 5000);
+    return () => {
+      clearInterval(slider);
+    };
+  }, [index]);
+
   return (
     <div className='services'>
         <h5>Our Services</h5>
@@ -76,6 +102,36 @@ const Services = () => {
                     your goods.
                 </span>
             </div>
+        </div>
+        <div className="services-mob">
+            {rendering.map((item, indexRendering) => {
+            const { id, image, title, text } = item;
+            let position = "nextSlide";
+            if (indexRendering === index) {
+                position = "activeSlide";
+            }
+            if (
+                indexRendering === index - 1 ||
+                (index === 0 && indexRendering === rendering.length - 1)
+            ) {
+                position = "lastSlide";
+            }
+            return (
+                <div id="service-boxmob" className={position}>
+                    <div className="box-img">
+                        <img src={image} alt="" srcset="" />
+                    </div>
+                    <p>{title}</p>
+                    <span>
+                        {text}
+                    </span>
+                </div>
+            );
+            })}
+        </div>
+        <div className="slider-icons">
+            <img src={prevIcon} alt="" className='prev-icon' onClick={() => setIndex(index - 1)}/>
+            <img src={nextIcon} alt="" className='next-icon' onClick={() => setIndex(index + 1)}/>
         </div>
     </div>
   )
